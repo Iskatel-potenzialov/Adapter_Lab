@@ -1,0 +1,13 @@
+# Install a CUDA-compatible PyTorch build for the target Ubuntu server first.
+# Select the build matching the server CUDA version at https://pytorch.org/.
+torch
+fastapi>=0.110
+uvicorn[standard]>=0.29
+transformers
+peft
+trl
+bitsandbytes
+datasets
+accelerate
+pydantic
+python-multipart

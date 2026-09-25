@@ -1,0 +1,16 @@
+[Unit]
+Description=Qwen LoRA Fine-tuning Studio backend
+After=network.target
+
+[Service]
+Type=simple
+User=YOUR_LINUX_USER
+WorkingDirectory=/absolute/path/to/qwen-lora-finetuning-studio/backend
+EnvironmentFile=/absolute/path/to/qwen-lora-finetuning-studio/backend/.env
+Environment=HF_HUB_OFFLINE=1
+ExecStart=/absolute/path/to/conda/envs/qwen_studio/bin/uvicorn server:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
