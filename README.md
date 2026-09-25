@@ -1,4 +1,4 @@
-# Qwen LoRA Fine-tuning Studio
+# Qwen LoRA Fine-tuning & Evaluation Studio
 
 Локальная веб-студия для подготовки датасетов, обучения LoRA-адаптеров и проверки того, действительно ли дообучение улучшило модель.
 
