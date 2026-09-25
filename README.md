@@ -5,11 +5,9 @@
 результат относительно clean Base model.
 
 > В версии v1 используется только текстовая часть модели.  
-> Изображения, OCR, видео и multimodal datasets не поддерживаются.
 
 V1 ориентирован на structured transformation: модель извлекает и возвращает
-факты из входных данных в стабильном JSON-формате. Это не RAG и не база знаний
-для восстановления скрытых справочных фактов.
+факты из входных данных в стабильном JSON-формате. 
 
 ---
 
@@ -55,10 +53,6 @@ FastAPI
         + QLoRA adapters
 ```
 
-Frontend работает на Windows. Backend, обучение и inference работают на
-Ubuntu-сервере с NVIDIA GPU. Dataset metadata, training jobs, adapters и
-evaluation artifacts хранятся в JSON/JSONL-файлах на локальном диске: в v1 нет
-базы данных, внешней очереди или облачного runtime.
 
 ### Как проходит один запуск
 
@@ -109,34 +103,6 @@ reservation: training, generation и evaluation не используют GPU п
 - минимум 32 ГБ RAM рекомендуется;
 - локально скачанная `Qwen2.5-VL-7B-Instruct`.
 
-### Windows
-
-- Node.js 20+;
-- браузер;
-- доступ к Ubuntu backend по LAN.
-
----
-
-## Переменные окружения
-
-На Ubuntu скопировать `backend/.env.example` в `backend/.env` и указать локальный путь к модели:
-
-```text
-backend/.env
-```
-
-Пример:
-
-```env
-MODEL_PATH=/path/to/Qwen2.5-VL-7B-Instruct
-HOST=0.0.0.0
-PORT=8000
-FRONTEND_ORIGIN=http://localhost:5173
-IDLE_UNLOAD_SECONDS=60
-```
-
-Путь к модели не должен быть захардкожен в коде.
-
 ---
 
 ## Backend
@@ -150,26 +116,6 @@ python -m pip check
 uvicorn server:app --host 0.0.0.0 --port 8000
 ```
 
-Не заменяйте CUDA-совместимую сборку PyTorch произвольной CPU-сборкой.
-
-### Запуск через systemd
-
-Для длительных training/evaluation запусков используйте отдельный systemd service,
-а не `nohup` или `tmux`: процесс в пользовательском terminal cgroup может быть
-остановлен `systemd-oomd` при memory pressure. Пример unit находится в
-`deploy/qwen-backend.service.example`; замените `YOUR_LINUX_USER`,
-`WorkingDirectory`, `EnvironmentFile` и путь Conda environment на свои.
-
-```bash
-sudo cp deploy/qwen-backend.service.example /etc/systemd/system/qwen-backend.service
-sudo systemctl daemon-reload
-sudo systemctl start qwen-backend
-sudo systemctl status qwen-backend
-sudo journalctl -u qwen-backend -f
-```
-
-Для постоянного deployment можно отдельно выполнить
-`sudo systemctl enable qwen-backend`; остановка — `sudo systemctl stop qwen-backend`.
 
 ### Verified Stage 3 GPU environment
 
@@ -190,13 +136,6 @@ Smoke test QLoRA успешно проверен на Ubuntu в Conda environmen
 
 ## Frontend
 
-Запуск:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
 
 Frontend по умолчанию работает через Vite. Скопируйте `frontend/.env.example` в
 `frontend/.env` и при необходимости укажите адрес Ubuntu backend, доступный из
@@ -599,38 +538,5 @@ HF_HUB_OFFLINE=1
 local_files_only=True
 ```
 
----
-
-## Что не поддерживается в v1
-
-- изображения;
-- OCR;
-- video;
-- multimodal datasets;
-- multi-GPU;
-- distributed training;
-- auth;
-- HTTPS;
-- Docker requirement;
-- database;
-- Redis;
-- Celery;
-- cloud deployment.
-
----
 
 
-
-## Для разработчика
-
-Перед изменениями прочитайте:
-
-- `SPEC.md` — техническое задание;
-- `AGENTS.md` — обязательные правила работы с проектом;
-- `README.md` — практический запуск и использование.
-
-Не добавляйте функциональность "на будущее".
-
-Главный принцип проекта:
-
-**минимально необходимая реализация без overengineering.**
